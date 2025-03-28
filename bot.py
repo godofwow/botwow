@@ -10,7 +10,9 @@ from sqlalchemy.orm import sessionmaker
 import uvicorn
 from sqlalchemy import select
 from models import User, Base  # Импорт моделей БД
-from openai import OpenAI  # GPT API
+from mistralai.client import MistralClient
+from mistralai.models.chat_completion import ChatMessage
+
 from oauthlib.oauth2 import WebApplicationClient  # OAuth
 
 # Загружаем переменные окружения
@@ -20,11 +22,11 @@ load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
 WEBHOOK_URL = os.getenv("WEBHOOK_URL")
 DATABASE_URL = os.getenv("DATABASE_URL")
-GPT_API_KEY = os.getenv("GPT_API_KEY")
+MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
 
 # Проверяем переменные окружения
-if not all([TOKEN, WEBHOOK_URL, DATABASE_URL, GPT_API_KEY]):
-    raise ValueError("Ошибка: Убедитесь, что BOT_TOKEN, WEBHOOK_URL, DATABASE_URL и GPT_API_KEY установлены.")
+if not all([TOKEN, WEBHOOK_URL, DATABASE_URL, MISTRAL_API_KEY]):
+    raise ValueError("Ошибка: Убедитесь, что BOT_TOKEN, WEBHOOK_URL, DATABASE_URL и MISTRAL_API_KEY установлены.")
 
 logging.basicConfig(level=logging.INFO)
 
@@ -33,13 +35,17 @@ bot = Bot(token=TOKEN)
 dp = Dispatcher()
 app = FastAPI()
 
-def get_gpt_response(text):
-    client = OpenAI(api_key=GPT_API_KEY)
-    response = client.completions.create(
-        model="gpt-4",
-        messages=[{"role": "user", "content": text}]
+client = MistralClient(api_key=MISTRAL_API_KEY)
+
+def ask_gpt(prompt):
+    messages = [ChatMessage(role="user", content=prompt)]
+    
+    response = client.chat(
+        model="mistral-tiny",  # Можно заменить на "mistral-small" или "mistral-medium"
+        messages=messages
     )
-    return response.choices[0].message["content"]
+
+    return response.choices[0].message.content
 
 # Настройка базы данных
 engine = create_async_engine(DATABASE_URL)
