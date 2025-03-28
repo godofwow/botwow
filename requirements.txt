@@ -9,4 +9,4 @@ google-auth-httplib2
 requests
 mistralai
 dotenv
-psycopg2-binary
+asyncpg
