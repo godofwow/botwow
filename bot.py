@@ -4,7 +4,8 @@ import asyncio
 from aiogram import Bot, Dispatcher, types, Router
 from aiogram.filters import Command
 from aiogram.types import Message, Update
-from fastapi import FastAPI, Depends, request
+from fastapi import FastAPI, Depends
+from fastapi.requests import Request
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 import uvicorn
