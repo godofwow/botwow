@@ -65,11 +65,19 @@ async def start_handler(message: Message, db: AsyncSession = Depends(get_db)):
         await db.commit()
     await message.answer("Привет! Я твой Telegram-бот MaestroAI.")
 
-# Обработка любых сообщений через GPT
 @dp.message()
-async def gpt_handler(message: Message):
-    response = get_gpt_response(message.text)
-    await message.answer(response)
+async def mistral_handler(message: Message):
+    try:
+        response = client.chat.complete(
+            model="mistral-large-latest",
+            messages=[
+                {"role": "user", "content": message.text},
+            ]
+        )
+        await message.answer(response.choices[0].message.content)
+    except Exception as e:
+        logging.error(f"Ошибка при обработке запроса к Mistral: {e}")
+        await message.answer("Произошла ошибка при обработке запроса. Попробуйте позже.")
 
 # Обработка Webhook
 @app.post("/")
