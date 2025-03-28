@@ -1,7 +1,7 @@
 import os
 import logging
 import asyncio
-from aiogram import Bot, Dispatcher, types
+from aiogram import Bot, Dispatcher, types, Router
 from aiogram.filters import Command
 from aiogram.types import Message, Update
 from fastapi import FastAPI, Depends
@@ -31,7 +31,18 @@ logging.basicConfig(level=logging.INFO)
 
 # Инициализация бота и диспетчера
 bot = Bot(token=TOKEN)
-dp = Dispatcher()
+router = Router()
+
+@router.message(Command("start"))
+async def start_handler(message: Message):
+    async with AsyncSessionLocal() as db:
+        user = await db.execute(select(User).where(User.telegram_id == message.from_user.id))
+        if not user.scalar():
+            db.add(User(telegram_id=message.from_user.id))
+            await db.commit()
+    await message.answer("Привет! Я твой Telegram-бот MaestroAI.")
+
+dp.include_router(router)
 app = FastAPI()
 
 api_key = os.environ["MISTRAL_API_KEY"]
