@@ -17,7 +17,7 @@ from contextlib import asynccontextmanager
 # Загружаем переменные окружения
 from dotenv import load_dotenv
 load_dotenv()  # Загружаем переменные окружения
-BOT_TOKEN = os.getenv("BOT_TOKEN")  # Получаем токен из .env
+BOT_TOKEN = os.getenv(BOT_TOKEN)  # Получаем токен из .env
 if not BOT_TOKEN:
     raise ValueError("Ошибка: BOT_TOKEN не найден. Проверь .env файл!")
 
@@ -33,7 +33,7 @@ if not all([TOKEN, WEBHOOK_URL, DATABASE_URL, MISTRAL_API_KEY]):
 logging.basicConfig(level=logging.INFO)
 
 # Инициализация бота и диспетчера
-bot = Bot(token="BOT_TOKEN")
+bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()  # <-- Добавил объявление dp
 router = Router()  # Создаём роутер
 
