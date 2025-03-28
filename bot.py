@@ -10,9 +10,7 @@ from sqlalchemy.orm import sessionmaker
 import uvicorn
 from sqlalchemy import select
 from models import User, Base  # Импорт моделей БД
-from mistralai.client import MistralClient
-from mistralai.models.chat_completion import ChatMessage
-
+from mistralai import Mistral
 from oauthlib.oauth2 import WebApplicationClient  # OAuth
 
 # Загружаем переменные окружения
@@ -35,17 +33,21 @@ bot = Bot(token=TOKEN)
 dp = Dispatcher()
 app = FastAPI()
 
-client = MistralClient(api_key=MISTRAL_API_KEY)
+api_key = os.environ["MISTRAL_API_KEY"]
+model = "mistral-large-latest"
 
-def ask_gpt(prompt):
-    messages = [ChatMessage(role="user", content=prompt)]
-    
-    response = client.chat(
-        model="mistral-tiny",  # Можно заменить на "mistral-small" или "mistral-medium"
-        messages=messages
-    )
+client = Mistral(api_key=api_key)
 
-    return response.choices[0].message.content
+chat_response = client.chat.complete(
+    model= model,
+    messages = [
+        {
+            "role": "user",
+            "content": "What is the best French cheese?",
+        },
+    ]
+)
+print(chat_response.choices[0].message.content)
 
 # Настройка базы данных
 engine = create_async_engine(DATABASE_URL)
