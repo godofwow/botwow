@@ -12,6 +12,7 @@ from sqlalchemy import select
 from models import User, Base  # Импорт моделей БД
 from mistralai import Mistral
 from oauthlib.oauth2 import WebApplicationClient  # OAuth
+from contextlib import asynccontextmanager
 
 # Загружаем переменные окружения
 from dotenv import load_dotenv
