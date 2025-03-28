@@ -10,3 +10,4 @@ requests
 mistralai
 dotenv
 asyncpg
+psycopg2
