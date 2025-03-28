@@ -96,11 +96,14 @@ async def create_tables():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
-@app.on_event("startup")
-async def on_startup():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     await create_tables()
     await bot.set_webhook(WEBHOOK_URL)
     logging.info("Бот запущен")
+    yield  # Позволяет корректно завершать приложение
+
+app = FastAPI(lifespan=lifespan)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
