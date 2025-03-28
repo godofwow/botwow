@@ -30,7 +30,7 @@ if not all([TOKEN, WEBHOOK_URL, DATABASE_URL, MISTRAL_API_KEY]):
 logging.basicConfig(level=logging.INFO)
 
 # Инициализация бота и диспетчера
-bot = Bot(token=BOT_TOKEN)
+bot = Bot(token="YOUR_BOT_TOKEN")
 dp = Dispatcher()  # <-- Добавил объявление dp
 router = Router()  # Создаём роутер
 
