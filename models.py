@@ -9,7 +9,7 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    telegram_id = Column(String, unique=True, nullable=False)  # ID в Telegram
+    telegram_id = Column(BigInteger, unique=True, nullable=False)
     username = Column(String, nullable=True)
     role = Column(String, nullable=False, default="user")  # user, project_manager, owner
     created_at = Column(DateTime, default=datetime.utcnow)
