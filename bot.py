@@ -58,13 +58,14 @@ async def get_db():
 
 # Обработчик команды /start
 @dp.message(Command("start"))
-async def start_handler(message: Message, db: AsyncSession = Depends(get_db)):
-    user = await db.execute(select(User).where(User.telegram_id == message.from_user.id))
-    if not user.scalar():
-        db.add(User(telegram_id=message.from_user.id))
-        await db.commit()
+async def start_handler(message: Message):
+    async with AsyncSessionLocal() as db:
+        user = await db.execute(select(User).where(User.telegram_id == message.from_user.id))
+        if not user.scalar():
+            db.add(User(telegram_id=message.from_user.id))
+            await db.commit()
     await message.answer("Привет! Я твой Telegram-бот MaestroAI.")
-
+    
 @dp.message()
 async def mistral_handler(message: Message):
     try:
