@@ -4,7 +4,7 @@ import asyncio
 from aiogram import Bot, Dispatcher, types, Router
 from aiogram.filters import Command
 from aiogram.types import Message, Update
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, request
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 import uvicorn
@@ -98,7 +98,9 @@ async def mistral_handler(message: Message):
 
 # Обработка Webhook
 @app.post("/")
-async def process_webhook(update: dict):
+async def process_webhook(request: Request):
+    update = await request.json()
+    logging.info(f"Получен Webhook: {update}")  # Логируем запрос
     telegram_update = Update(**update)
     await dp.feed_update(bot, telegram_update)
     return {"ok": True}
