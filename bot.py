@@ -17,7 +17,7 @@ from contextlib import asynccontextmanager
 # Загружаем переменные окружения
 from dotenv import load_dotenv
 load_dotenv()  # Загружаем переменные окружения
-BOT_TOKEN = os.getenv(BOT_TOKEN)  # Получаем токен из .env
+BOT_TOKEN = os.getenv("BOT_TOKEN")  # Получаем токен из .env
 if not BOT_TOKEN:
     raise ValueError("Ошибка: BOT_TOKEN не найден. Проверь .env файл!")
 
